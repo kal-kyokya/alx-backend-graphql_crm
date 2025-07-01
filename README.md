@@ -30,10 +30,10 @@ After completing this project, I will be able to:
 - **Graphene-Django**: A Python library that integrates GraphQL into Django seamlessly.
 
 ## Tools & Libraries
-```graphene-django```: Main library to integrate GraphQL in Django
-```GraphiQL```: Browser-based UI for testing GraphQL APIs
-```Django ORM```: Connect your models directly to GraphQL types
-```Insomnia/Postman```: Useful for testing APIs including GraphQL
+- ```graphene-django```: Main library to integrate GraphQL in Django
+- ```GraphiQL```: Browser-based UI for testing GraphQL APIs
+- ```Django ORM```: Connect your models directly to GraphQL types
+- ```Insomnia/Postman```: Useful for testing APIs including GraphQL
 
 ## Real-World Use Cases
 - Airbnb-style applications with flexible data querying
