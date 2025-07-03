@@ -1,8 +1,0 @@
-#!/usr/bin/env python3
-"""
-'schema' defines the structure of operations permitted on this GraphQL API
-"""
-import graphene
-
-
-class Query(graphene.ObjectType):
