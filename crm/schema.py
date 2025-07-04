@@ -12,9 +12,19 @@ from django.utils.timezone import now
 import re
 
 
-# -------------------------------------------
-# Class defining API's 'read operations'
-# -------------------------------------------
+# ---------------------------------------------------------
+# Mutation Field for simple 'create' on Customer table
+# ---------------------------------------------------------
+class CreateCustomer(graphene.Mutation):
+    """Contains the logic for creation of a customer record.
+    Inheritance:
+    	graphene.Mutation: Enables customization of the mutation.
+    """
+
+
+# ------------------------------------------------
+# Class defining the API's 'read operations'
+# ------------------------------------------------
 class Query(graphene.ObjectType):
     """Collection of 'read commands' (Fields) and associated logic (resolvers).
     Could also be defined as:
