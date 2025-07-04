@@ -14,6 +14,8 @@ class Query(graphene.ObjectType):
     Args:
     	graphene.ObjectType: Contains boilerplate connecting client and server side.
     """
+    # Could also be defined as:
+    #	'class Query(CRMQuery, graphene.ObjectType)'
 
     hello = graphene.String()
 
