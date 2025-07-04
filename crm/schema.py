@@ -3,6 +3,13 @@
 'schema' defines the structure of operations permitted on this GraphQL API
 """
 import graphene
+from graphene import Field, List, String, ID, Int, Float
+from .models import Customer, Product, Order
+from .types import CustomerType, ProductType, OrderType
+from django.db import transaction
+from django.core.exceptions import ValidationError
+from django.utils.timezone import now
+import re
 
 
 # -------------------------------------------
