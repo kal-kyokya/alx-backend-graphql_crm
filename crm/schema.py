@@ -67,7 +67,7 @@ class Query(graphene.ObjectType):
     """Collection of 'read commands' (Fields) and associated logic (resolvers).
     Could also be defined as:
     	'class Query(CRMQuery, graphene.ObjectType)'
-    Args:
+    Inheritance:
     	graphene.ObjectType: Contains boilerplate connecting client and server side.
     """
 
@@ -84,8 +84,19 @@ class Query(graphene.ObjectType):
         return 'Hello, GraphQL!'
 
 
+# -----------------------------------------------
+# Class defining the API's 'write operations'
+# -----------------------------------------------
+class Mutation(graphene.ObjectType):
+    """Collection of 'write commands' (Fields) extracted from their 'resolvers'.
+    Inheritance:
+    	graphene.ObjectType: Contains boilerplate connecting client and server side.
+    """
+    create_customer = CreateCustomer.Field()
+
+
 # -------------------------------------------
 # The contract between client and server.
-# define root query type and mutations
+# Defines the root query type & mutations.
 # -------------------------------------------
 schema = graphene.Schema(query=Query)
