@@ -48,7 +48,7 @@ class CreateCustomer(graphene.Mutation):
         Args:
             self: Represents the current instance of this class.
             info: An object containing additional context associated with the current request.
-        name: A required string object representing the new customer's name.
+            name: A required string object representing the new customer's name.
             email: A required string object representing the new customer's email.
             phone: Optional string representing the customer's phone number.
         """
@@ -191,6 +191,73 @@ class CreateProduct(graphene.Mutation):
             message="Product created",
             product=product
         )
+
+
+# ---------------------------------------------------------
+# Mutation Field for simple 'create' on Order table
+# ---------------------------------------------------------
+class CreateOrder(graphene.Mutation):
+    """* Contains the logic for creation of an order record. A bit like a 'Query resolver'.
+    * **Inheritance**:
+    	* graphene.Mutation: Enables customization of the mutation.
+    * **Attributes**:
+        * customer_id: A required ID object order to customer.
+        * product_ids: A required array of ordered products.
+        * order_date: Optional date object locating the order in space.
+    """
+
+    class Arguments:
+        """Inner class listing the expected request inputs.
+        """
+        customer_id = ID(required=True)
+        product_ids = List(ID, required=True)
+        order_date = graphene.DateTime(require=False)
+
+
+    order = Field(OrderType)
+    success = graphene.Boolean()
+    message = String()
+
+    @transaction.atomic
+    def mutate(self, info, customer_id, product_ids, order_date=None):
+        """Executes the CRUD operation on the database.
+        * **Args**:
+            * self: Represents the current instance of this class.
+            * info: An object containing additional context associated with the current request.
+    	    * customer_id: A required ID object order to customer.
+	    * product_ids: A required array of ordered products.
+	    * order_date: Optional date object locating the order in space.
+        """
+        try:
+            customer = Customer.objects.get(id=customer_id)
+        except Customer.DoesNotExist:
+            return CreateOrder(
+                success=False,
+                message="Invalid customer ID"
+            )
+
+        if not product_ids:
+            return createOrder(
+                success=False,
+                message="No products selected"
+            )
+
+        products = Product.objects.filter(id__in=product_ids)
+
+        if products.count() != len(product_ids):
+            return CreatorOrder(
+                success=False,
+                message="One or more invalid product IDs"
+            )
+
+        total = sum(product.price for product in products)
+
+        order = Order(customer=customer, total_amount=total)
+        if order_date:
+            order.order_date = order_date
+        order.products.set(products)
+
+        return CreateOrder(success=True, message="Order created", order=order)
 
 
 # ------------------------------------------------
