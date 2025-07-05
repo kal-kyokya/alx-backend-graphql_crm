@@ -16,10 +16,15 @@ import re
 # Mutation Field for simple 'create' on Customer table
 # ---------------------------------------------------------
 class CreateCustomer(graphene.Mutation):
-    """Contains the logic for creation of a customer record. A bit like a 'Query resolver'.
-    Inheritance:
-    	graphene.Mutation: Enables customization of the mutation.
+    """* Contains the logic for creation of a customer record. A bit like a 'Query resolver'.
+    * **Inheritance**:
+    	* graphene.Mutation: Enables customization of the mutation.
+    * **Attributes**:
+        * name: A required string object representing the new customer's name.
+        * email: A required string object representing the new customer's email.
+        * phone: Optional string representing the customer's phone number.
     """
+
     class Arguments:
         """Inner class for definition of the expected request inputs.
         """
@@ -100,4 +105,4 @@ class Mutation(graphene.ObjectType):
 # The contract between client and server.
 # Defines the root query type & mutations.
 # -------------------------------------------
-schema = graphene.Schema(query=Query)
+schema = graphene.Schema(query=Query, mutation=Mutation)

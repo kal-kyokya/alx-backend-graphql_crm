@@ -45,4 +45,4 @@ class Mutation(CRMMutation, graphene.ObjectType):
 # The contract between client and server.
 # define root query type and mutations
 # -------------------------------------------
-schema = graphene.Schema(query=Query)
+schema = graphene.Schema(query=Query, mutation=Mutation)
