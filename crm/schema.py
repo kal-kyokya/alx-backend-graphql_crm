@@ -10,6 +10,8 @@ from django.db import transaction
 from django.core.exceptions import ValidationError
 from django.utils.timezone import now
 import re
+from graphene_django.filter i;port DjangoFilterConnectionField
+from .filters import CustomerFilter, ProductFlter, OrderFilter
 
 
 class CustomerInput(InputObjectType):
@@ -272,7 +274,18 @@ class Query(graphene.ObjectType):
     """
 
     hello = graphene.String()
-    all_customers = graphene.List(CustomerType)
+    all_customers = DjangoFilterConnectionField(
+        CustomerType,
+        filterset_class=CustomerFilter,
+    )
+    all_products = DjangoFilterConnectionField(
+        ProductType,
+        filterset_class=ProductFilter,
+    )
+    all_orders = DjangoFilterConnectionField(
+        OrderType,
+        filterset_class=OrderFilter,
+    )
 
     def resolve_hello(root, info):
         """Resolver for any 'hello' request client-side.
