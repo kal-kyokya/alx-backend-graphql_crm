@@ -65,6 +65,82 @@ class CreateCustomer(graphene.Mutation):
                               customer=customer)
 
 
+# ----------------------------------------------------------
+# Mutation Field for creation multiple Customer records
+# ----------------------------------------------------------
+class BulkCreateCustomers(graphene.Mutation):
+    """* Contains the logic for creation of multiple customer record. A bit like a 'Query resolver'.
+    * **Inheritance**:
+    	* graphene.Mutation: Enables customization of the mutation.
+    * **Attributes**:
+        * customers: An array of objects structured like 'CustomerType' instances.
+    """
+
+    class Arguments:
+        """Inner class listing the expected request inputs.
+        """
+        customers = List(
+            required=True,
+            graphene.InputObjectType(
+                "CustomerInput",
+                name=String(required=True),
+                email=String(required=True),
+                phone=String()
+            ),
+        )
+
+
+    created_customers = List(CustomerType)
+    success = graphene.Boolean()
+    errors = List(String)
+
+    def mutate(self, info, customers):
+        """Executes the CRUD operation on the database.
+        * **Args**:
+            * self: Represents the current instance of this class.
+            * info: An object containing additional context associated with the current request.
+            * customers: An array of objects structured like 'CustomerType' instances.
+        """
+        created = []
+        errors = []
+
+        for data in customers:
+            name = data.get('name')
+            email = data.get('email')
+            phone = data.get('phone')
+
+            if not name or not email:
+                errors.append(
+                    f"Missing required fields for: {name or '[Unnamed]'}"
+                )
+                continue
+
+            if Customer.objects.filter(email=email).exists():
+                errors.append(
+                    f"Email already exists: {email}"
+                )
+                continue
+
+            if phone and not re.match(
+                    r'^(\+\d{1,3}\d{4,14}|(\d{3}-\d{4}))$', phone):
+                errors.append(f"Invalid phone: {phone}")
+                continue
+
+            customer = Customer(
+                name=name,
+                email=email,
+                phone=phone
+            )
+            customer.save()
+            created.append(customer)
+
+        return BulkCreateCustomers(
+            success=bool(created),
+            created_customers=created,
+            errors=errors,
+        )
+
+
 # ------------------------------------------------
 # Class defining the API's 'read operations'
 # ------------------------------------------------
