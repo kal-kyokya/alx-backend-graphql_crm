@@ -13,7 +13,7 @@ import re
 
 
 class CustomerInput(InputObjectType):
-        name = String(required=True)
+        name = graphene.String(required=True)
         email = String(required=True)
         phone = String()
 
@@ -39,7 +39,7 @@ class CreateCustomer(graphene.Mutation):
         phone = String()
 
 
-    customer = Field(CustomerType)
+    customer = graphene.Field(CustomerType)
     success = graphene.Boolean()
     message = String()
 
