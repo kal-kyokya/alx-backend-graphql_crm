@@ -3,13 +3,19 @@
 'schema' defines the structure of operations permitted on this GraphQL API
 """
 import graphene
-from graphene import Field, List, String, ID, Int, Float
+from graphene import Field, List, String, ID, Int, Float, InputObjectType
 from .models import Customer, Product, Order
 from .types import CustomerType, ProductType, OrderType # Contains the 'class Meta:' for each GraphQL Type defined.
 from django.db import transaction
 from django.core.exceptions import ValidationError
 from django.utils.timezone import now
 import re
+
+
+class CustomerInput(InputObjectType):
+        name = String(required=True)
+        email = String(required=True)
+        phone = String()
 
 
 # ---------------------------------------------------------
@@ -26,7 +32,7 @@ class CreateCustomer(graphene.Mutation):
     """
 
     class Arguments:
-        """Inner class for definition of the expected request inputs.
+        """Inner class listing the expected request inputs.
         """
         name = String(required=True)
         email = String(required=True)
@@ -40,11 +46,11 @@ class CreateCustomer(graphene.Mutation):
     def mutate(self, info, name, email, phone=None):
         """Executes the CRUD operation on the database.
         Args:
-        	self: Represents the current instance of this class.
-        	info: An object containing additional context associated with the current request.
-        	name: A required string object representing the new customer's name.
-        	email: A required string object representing the new customer's email.
-        	phone: Optional string representing the customer's phone number.
+            self: Represents the current instance of this class.
+            info: An object containing additional context associated with the current request.
+        name: A required string object representing the new customer's name.
+            email: A required string object representing the new customer's email.
+            phone: Optional string representing the customer's phone number.
         """
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
             return CreateCustomer(success=False,
@@ -79,15 +85,7 @@ class BulkCreateCustomers(graphene.Mutation):
     class Arguments:
         """Inner class listing the expected request inputs.
         """
-        customers = List(
-            required=True,
-            graphene.InputObjectType(
-                "CustomerInput",
-                name=String(required=True),
-                email=String(required=True),
-                phone=String()
-            ),
-        )
+        customers = List(CustomerInput, required=True)
 
 
     created_customers = List(CustomerType)
@@ -138,6 +136,60 @@ class BulkCreateCustomers(graphene.Mutation):
             success=bool(created),
             created_customers=created,
             errors=errors,
+        )
+
+
+# ---------------------------------------------------------
+# Mutation Field for simple 'create' on Product table
+# ---------------------------------------------------------
+class CreateProduct(graphene.Mutation):
+    """* Contains the logic for creation of a product record. A bit like a 'Query resolver'.
+    * **Inheritance**:
+    	* graphene.Mutation: Enables customization of the mutation.
+    * **Attributes**:
+        * name: A required string object representing the new product's name.
+        * price: A required string object representing the new product's price.
+        * stock: Optional integer representing the available product quantity.
+    """
+
+    class Arguments:
+        """Inner class listing the expected request inputs.
+        """
+        name = String(required=True)
+        price = graphene.Decimal(required=True)
+        stock = Int(required=False, default_value=0)
+
+
+    product = Field(ProductType)
+    success = graphene.Boolean()
+    message = String()
+
+    def mutate(self, info, name, price, stock):
+        """Executes the CRUD operation on the database.
+        * **Args**:
+            * self: Represents the current instance of this class.
+            * info: An object containing additional context associated with the current request.
+            * name: A required string object representing the new product's name.
+            * price: A required string object representing the new product's price.
+    	    * stock: Optional integer representing the available product quantity.
+        """
+        if price <= 0:
+            return CreateProduct(
+                success=False,
+                message="Price must be positive"
+            )
+        if stock <= 0:
+            return CreateProduct(
+                success=False,
+                message="Stock must be non-negative"
+            )
+
+        product = Product(name=name, price=price, stock=stock)
+        product.save()
+        return CreatedProduct(
+            success=True,
+            message="Product created",
+            product=product
         )
 
 
