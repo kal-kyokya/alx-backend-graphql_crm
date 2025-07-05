@@ -10,8 +10,9 @@ from django.db import transaction
 from django.core.exceptions import ValidationError
 from django.utils.timezone import now
 import re
-from graphene_django.filter i;port DjangoFilterConnectionField
+from graphene_django.filter import DjangoFilterConnectionField
 from .filters import CustomerFilter, ProductFlter, OrderFilter
+from graphene_django import DjangoObjectType
 
 
 class CustomerInput(InputObjectType):

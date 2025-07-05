@@ -3,7 +3,7 @@ from .models import Customer, Product, Order
 from django.db.models import Q
 
 
-class customerFilter(django_filters.FilterSet):
+class CustomerFilter(django_filters.FilterSet):
     name = django_filters.CharFilter(lookup_expr='icontains')
     email = django_filters.CharFilter(lookup_expr='icontains')
     created_at__gte = django_filters.DateFilter(
