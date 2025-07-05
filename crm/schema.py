@@ -72,6 +72,7 @@ class Query(graphene.ObjectType):
     """
 
     hello = graphene.String()
+    all_customers = graphene.List(CustomerType)
 
     def resolve_hello(root, info):
         """Resolver for any 'hello' request client-side.

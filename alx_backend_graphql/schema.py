@@ -3,23 +3,23 @@
 'schema' defines the structure of operations permitted on this GraphQL API
 """
 import graphene
+from crm.schema import Query as CRMQuery, Mutation as CRMMutation
 
 
 # -------------------------------------------
 # Class defining API's 'read operations'
 # -------------------------------------------
-class Query(graphene.ObjectType):
+class Query(CRMQuery, graphene.ObjectType):
     """Collection of 'read commands' (Fields) and associated logic (resolvers).
-    Could also be defined as:
-    	'class Query(CRMQuery, graphene.ObjectType)'
-    Args:
-    	graphene.ObjectType: Contains boilerplate connecting client and server side.
+    Inheritance:
+    	CRMQuery: Permitted queries to the 'crm App'.
+    	graphene.ObjectType: Contains boilerplate enabling CRUD operations.
     """
 
     hello = graphene.String()
 
     def resolve_hello(root, info):
-        """Resolver for any 'hello' request client-side.
+        """Resolver for any 'hello' request emerging from the client-side.
         Args:
         	root: Represents the current instanciation of this Query class.
         	info: Contains useful context associated with the request made.
@@ -27,6 +27,18 @@ class Query(graphene.ObjectType):
         	A string representing the expected response.
         """
         return 'Hello, GraphQL!'
+
+
+# -------------------------------------------
+# Class defining API's 'write operations'
+# -------------------------------------------
+class Mutation(CRMMutation, graphene.ObjectType):
+    """Collection of 'write commands' (Fields) extracted from  their resolvers.
+    Inheritance:
+    	CRMMutation: Permitted modifications to the 'crm App'.
+    	graphene.ObjectType: Contains boilerplate enabling CRUD operations.
+    """
+    pass
 
 
 # -------------------------------------------
