@@ -39,7 +39,7 @@ class Order(models.Model):
     Inheritance:
     	models.Model: Ensures this class is mapped onto the right DB table.
     """
-    customer_id = models.ForeignKey(Customer, om_delete=models.CASCADE)
+    customer_id = models.ForeignKey(Customer, on_delete=models.CASCADE)
     product_id = models.ManyToManyField(Product)
     order_date = models.DateTimeField(auto_now_add=True)
     total_amount = models.DecimalField(

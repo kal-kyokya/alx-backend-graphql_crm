@@ -16,10 +16,48 @@ import re
 # Mutation Field for simple 'create' on Customer table
 # ---------------------------------------------------------
 class CreateCustomer(graphene.Mutation):
-    """Contains the logic for creation of a customer record.
+    """Contains the logic for creation of a customer record. A bit like a 'Query resolver'.
     Inheritance:
     	graphene.Mutation: Enables customization of the mutation.
     """
+    class Arguments:
+        """Inner class for definition of the expected request inputs.
+        """
+        name = String(required=True)
+        email = String(required=True)
+        phone = String()
+
+
+    customer = Field(CustomerType)
+    success = graphene.Boolean()
+    message = String()
+
+    def mutate(self, info, name, email, phone=None):
+        """Executes the CRUD operation on the database.
+        Args:
+        	self: Represents the current instance of this class.
+        	info: An object containing additional context associated with the current request.
+        	name: A required string object representing the new customer's name.
+        	email: A required string object representing the new customer's email.
+        	phone: Optional string representing the customer's phone number.
+        """
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+            return CreateCustomer(success=False,
+                                  message="Invalid email format")
+
+        if phone and re.match(r"^(\+\d{1,3}\d{4,14}|(\d{3}-\d{3}-\d{4}))$", phone):
+            return CreateCustomer(success=False,
+                                  message="Invalid phone format")
+
+        if Customer.objects.filter(email=email).exists:
+            return CreateCustomer(success=False,
+                                  message="Email already exists")
+
+        customer = Customer(name=name, email=email, phone=phone)
+        customer.save()
+        return CreateCustomer(success=True,
+                              message="Customer created",
+                              customer=customer)
 
 
 # ------------------------------------------------
