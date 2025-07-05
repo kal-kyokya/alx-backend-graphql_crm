@@ -186,7 +186,7 @@ class CreateProduct(graphene.Mutation):
 
         product = Product(name=name, price=price, stock=stock)
         product.save()
-        return CreatedProduct(
+        return CreateProduct(
             success=True,
             message="Product created",
             product=product
@@ -211,7 +211,7 @@ class CreateOrder(graphene.Mutation):
         """
         customer_id = ID(required=True)
         product_ids = List(ID, required=True)
-        order_date = graphene.DateTime(require=False)
+        order_date = graphene.DateTime(required=False)
 
 
     order = Field(OrderType)
@@ -285,15 +285,18 @@ class Query(graphene.ObjectType):
         return 'Hello, GraphQL!'
 
 
-# -----------------------------------------------
-# Class defining the API's 'write operations'
-# -----------------------------------------------
+# ----------------------------------------------------
+# Class registering all API's 'write operations'
+# ----------------------------------------------------
 class Mutation(graphene.ObjectType):
     """Collection of 'write commands' (Fields) extracted from their 'resolvers'.
     Inheritance:
     	graphene.ObjectType: Contains boilerplate connecting client and server side.
     """
     create_customer = CreateCustomer.Field()
+    bulk_create_customers = BulkCreateCustomers.Field()
+    create_product = CreateProduct.Field()
+    create_order = CreateOrder.Field()
 
 
 # -------------------------------------------
