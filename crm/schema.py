@@ -5,7 +5,7 @@
 import graphene
 from graphene import Field, List, String, ID, Int, Float
 from .models import Customer, Product, Order
-from .types import CustomerType, ProductType, OrderType # Contains the class Meta for each GraphQL Type defined.
+from .types import CustomerType, ProductType, OrderType
 from django.db import transaction
 from django.core.exceptions import ValidationError
 from django.utils.timezone import now
@@ -67,6 +67,7 @@ class Query(graphene.ObjectType):
     """Collection of 'read commands' (Fields) and associated logic (resolvers).
     Could also be defined as:
     	'class Query(CRMQuery, graphene.ObjectType)'
+    	Get its class Meta from './types.py'
     Inheritance:
     	graphene.ObjectType: Contains boilerplate connecting client and server side.
     """
