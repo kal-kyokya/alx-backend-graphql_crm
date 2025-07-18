@@ -1,0 +1,1 @@
+0 2 * * 0 /home/jpkk/alx-backend-graphql_crm/crm/crone_jobs/clean_inactive_customers.sh
