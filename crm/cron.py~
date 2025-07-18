@@ -20,5 +20,5 @@ def log_crm_heartbeat():
     except Exception as e:
         status = f"CRM alive but GraphQL error: {str(e)}"
 
-    with open("/tmp/crm_heartbeat_log.txt", "a") as f:
+    with open("/tmp/crm_heartneat_log.txt", "a") as f:
         f.write(f"{timestamp} {status}\n")
