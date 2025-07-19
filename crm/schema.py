@@ -302,7 +302,7 @@ class Query(graphene.ObjectType):
 # ----------------------------------------------------
 # Class registering all API's 'write operations'
 # ----------------------------------------------------
-class Mutation(graphene.ObjectType):
+class Mutation1(graphene.ObjectType):
     """Collection of 'write commands' (Fields) extracted from their 'resolvers'.
     Inheritance:
     	graphene.ObjectType: Contains boilerplate connecting client and server side.
@@ -311,6 +311,49 @@ class Mutation(graphene.ObjectType):
     bulk_create_customers = BulkCreateCustomers.Field()
     create_product = CreateProduct.Field()
     create_order = CreateOrder.Field()
+
+
+# ---------------------------------------------------
+# Class defining 'Product Restocking operations'
+# ---------------------------------------------------
+class UpdateLowStockProducts(graphene.Mutation):
+    """'mutate command' (Fields) and associated logic (resolvers).
+    Inheritance:
+    	graphene.Mutation: Contains boilerplate connecting client and server side.
+    """
+
+    class Output(graphene.List(ProductType))
+
+    success = graphene.String()
+
+    def mutate(self, info):
+        """Resolver for any 'Low stock update' request client-side.
+        Args:
+        	self: Represents the current instanciation of this Query class.
+        	info: Contains useful context associated with the request made.
+        Return:
+        	A list of the update low stock products.
+        """
+        low_stock_products = Product.objects.filter(stock__lt=10)
+        update_products = []
+
+        for product in low_stock_products:
+            product.stock += 10
+            product.save()
+            updated_products.append(product)
+
+        return UpdateLowStockProducts(success="Products restocked", output=updated_products)
+
+
+# ----------------------------------------------------
+# Class registering enabling 'Low stock updates'
+# ----------------------------------------------------
+class Mutation(graphene.ObjectType):
+    """Extract field attributes from the querying class.
+    Inheritance:
+    	graphene.ObjectType: Contains boilerplate connecting client and server side.
+    """
+    update_low_stock_products = UpdateLowStockProducts.Field()
 
 
 # -------------------------------------------

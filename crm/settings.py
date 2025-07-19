@@ -2,6 +2,7 @@ INSTALLED_APPS += ['django_crontab']
 
 CRONJOBS = [
     ('*/5 * * * *', 'crm.cron.log_crm_heartBeat'),
+    ('0 */12 * * *', 'crm.cron.update_low_stock'),
 ]
 
 # Enable logging to a different file
